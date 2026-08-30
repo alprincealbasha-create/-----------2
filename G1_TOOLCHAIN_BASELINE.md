@@ -1,8 +1,8 @@
 # G1 Toolchain Baseline
 
-Status: **RECORDED — COMPATIBILITY BLOCKER OPEN**  
+Status: **RECORDED — DEPENDENCY COMPATIBILITY RESOLVED; DEVICE BLOCKER OPEN**
 Date: 2026-08-30  
-Authority: `GD-G0-FINAL`, `RW-G0-FROZEN-001`, OD-014, OD-025
+Authority: `GD-G0-FINAL`, `RW-G0-FROZEN-001`, OD-014, and the owner-approved limited OD-025 revision in `G1-PREFLIGHT-02`
 
 ## Selected owner baseline
 
@@ -15,7 +15,7 @@ Authority: `GD-G0-FINAL`, `RW-G0-FROZEN-001`, OD-014, OD-025
 | Routing | `go_router` |
 | Backend client foundation | `supabase_flutter`; client foundation only in G1 |
 | Android application ID | `com.rawdatwird.app` |
-| Minimum Android SDK | API 23 / Android 6.0 |
+| Minimum Android SDK | API 24 / Android 7.0 |
 | Practical validation priority | Android 8.0/API 26 and newer |
 | Compile SDK | API 36 |
 | Target SDK | API 36 |
@@ -35,8 +35,8 @@ The required commands were run from the project root.
 | Android SDK | SDK `36.0.0`; platform `android-36`; build-tools `36.0.0` |
 | Android licenses | All accepted |
 | Android toolchain doctor result | PASS |
-| Connected Android target | None |
-| Installed Android emulator source | None found |
+| Connected Android target | None after re-verification |
+| Installed Android emulator source | None; installation was attempted but could not complete in this environment |
 
 `flutter doctor -v` reported only the absence of Visual Studio for Windows desktop development. Windows desktop is outside the Android-first MVP and this is not a G1 Android blocker.
 
@@ -47,13 +47,13 @@ The current `android/app/build.gradle.kts` has not been changed by this prefligh
 | Setting | Existing prototype | Approved target | Required G1 action |
 |---|---|---|---|
 | `applicationId` | `sa.wardalrawdah.ward_al_rawdah` | `com.rawdatwird.app` | Change explicitly during substantive G1 foundation work, including namespace/source alignment as needed |
-| `minSdk` | `flutter.minSdkVersion`, resolving to API 24 in Flutter 3.47.1 | API 23 | Set explicitly only after dependency compatibility is resolved |
+| `minSdk` | `flutter.minSdkVersion`, resolving to API 24 in Flutter 3.47.1 | API 24 | Compatible; make the selected baseline explicit/reproducible during substantive G1 foundation work |
 | `compileSdk` | `flutter.compileSdkVersion`, resolving to API 36 | API 36 | Compatible; make the selected baseline reproducible in G1 evidence |
 | `targetSdk` | `flutter.targetSdkVersion`, resolving to API 36 | API 36 | Compatible; make the selected baseline reproducible in G1 evidence |
 
 ## Compatibility concerns
 
-### API 23 dependency conflict — blocking
+### API 24 dependency requirement — resolved by limited owner revision
 
 The current resolved `supabase_flutter 2.17.2` dependency graph contains Android plugins whose installed Gradle declarations require API 24:
 
@@ -61,13 +61,15 @@ The current resolved `supabase_flutter 2.17.2` dependency graph contains Android
 - `shared_preferences_android 2.4.27` — `minSdk = 24`
 - `url_launcher_android 6.3.32` — `minSdk = 24`
 
-The current package graph therefore cannot substantiate the owner-approved API 23 floor. G1 must select and verify a compatible dependency resolution that preserves `supabase_flutter` while supporting API 23, or return an explicit owner/change-control decision before raising the minimum. The minimum must not be raised silently.
+This requirement was discovered by reading `.flutter-plugins-dependencies`, resolving each Android plugin path, and inspecting the plugin's installed `android/build.gradle.kts`. Inspection of all resolved Android plugins found no declared minimum higher than API 24.
 
-Flutter 3.47.1 accepts API 23 but warns below its default API 24; API 23 is its error floor in the installed toolchain. This makes physical/emulator validation on a supported target especially important.
+The owner revised OD-025 from API 23 to API 24 in `G1-PREFLIGHT-02`. API 24 now matches Flutter 3.47.1's default and the highest observed requirement in the resolved graph. No core dependency downgrade is required.
 
-### Android run target — exit obligation
+### Android run target — blocking
 
-No Android device is connected and no Android Virtual Device image is installed. This does not invalidate the installed Android toolchain, but G1 cannot satisfy its build-and-run exit evidence until a supported emulator or physical device is available.
+Android Studio is not installed. Command-line SDK tools, `sdkmanager`, `avdmanager`, and `adb` are available, but the Emulator package and system images were absent. Installation of Emulator `37.1.11` and an API 36 Google APIs x86_64 image was attempted. The legacy SDK manager stalled after creating a zero-byte archive; direct access to the official 421.4 MiB emulator archive succeeded but transferred at about 122–140 KiB/s, implying roughly one hour for that archive before the larger system image. The transfer was stopped at 6,254,592 bytes (about 5.96 MiB) and remains resumable in the SDK temporary directory.
+
+No Android Virtual Device could therefore be created or launched, and `flutter devices` still has no Android target. This remains the only preflight blocker.
 
 ## G1 boundary
 

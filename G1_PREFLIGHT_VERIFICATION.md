@@ -1,6 +1,6 @@
 # G1 Preflight Verification
 
-Preflight ID: `G1-PREFLIGHT-01`  
+Preflight ID: `G1-PREFLIGHT-02`
 Date: 2026-08-30  
 Frozen authority: `RW-G0-FROZEN-001`  
 Final result: **NOT READY FOR G1 EXECUTION**
@@ -14,10 +14,10 @@ Final result: **NOT READY FOR G1 EXECUTION**
 | OD-014 Flutter/Dart choice recorded | PASS | Flutter 3.47.1 stable and bundled Dart 3.13.1 |
 | OD-014 framework choices recorded | PASS | Riverpod, `go_router`, and `supabase_flutter` recorded |
 | Application ID decision resolved | PASS WITH PENDING APPLICATION | Target is `com.rawdatwird.app`; prototype difference documented before any change |
-| Minimum SDK decision resolved | **FAIL — COMPATIBILITY BLOCKER** | Owner target is API 23, but the current resolved `supabase_flutter` graph contains Android plugins requiring API 24 |
+| Minimum SDK decision resolved | PASS | Limited owner revision sets API 24, matching Flutter 3.47.1 and the highest observed resolved dependency requirement |
 | Target/compile SDK resolved | PASS | API 36, matching installed stable Android SDK and Flutter 3.47.1 defaults |
-| OD-025 device baseline recorded | PASS | Android phones/tablets; API 23; validation priority Android 8+ |
-| Supported Android build/run evidence available | PENDING G1 EXIT | No connected Android target and no installed emulator image; one must be provisioned before G1 exit |
+| OD-025 device baseline recorded | PASS | Android phones/tablets; API 24; validation priority Android 8+; iOS post-MVP |
+| Supported Android device/emulator available | **FAIL — DEVICE BLOCKER** | No physical Android device, existing AVD, Emulator package, or installed system image is available |
 | Toolchain inspected with required commands | PASS | `flutter --version`, `dart --version`, and `flutter doctor -v` executed |
 | Android toolchain has a blocking doctor issue | PASS (NONE) | Android SDK 36, Java 17, licenses accepted; Windows Visual Studio issue is out of scope |
 | Git root understood | PASS | No `.git` existed in project root or any inspected parent before initialization |
@@ -26,7 +26,7 @@ Final result: **NOT READY FOR G1 EXECUTION**
 | Frozen baseline commit available | PASS | Commit `ebb2d73` — `chore: establish frozen G0 project baseline` |
 | Flutter ignore policy adequate | PASS | Build/cache/local-property/keystore patterns are excluded |
 | Secret exposure check | PASS | No credential-content match; `android/local.properties` ignored; no private-key/keystore/build/cache file staged |
-| G2+ implementation performed by preflight | PASS (NONE) | Existing prototype code/migrations were preserved only as baseline; preflight created documentation and Git metadata only |
+| G2+ implementation performed by preflight | PASS (NONE) | Existing prototype code/migrations were preserved only as baseline; preflight changed documentation and development tooling only |
 | OD-012 safety constraint respected | PASS | No external/unknown database or production state was accessed, reset, rebuilt, or overwritten |
 
 ## Git determination
@@ -40,22 +40,25 @@ No reliable evidence exists to prove whether the folder was copied from another 
 
 The baseline commit contains 267 existing project files and the frozen governance package. Ignored local caches, build output, `android/local.properties`, signing material, and credential-pattern files were not included.
 
-## Blocking issue
+## Dependency compatibility resolution
 
-`supabase_flutter 2.17.2` currently resolves Android plugins declaring API 24. This conflicts with the owner-approved API 23 minimum. Because the task prohibits silently raising the minimum and preflight does not authorize dependency mutation, the package graph must be reconciled before substantive G1 execution.
+The owner revised OD-025 from API 23 to API 24. The resolved `app_links 7.2.1`, `shared_preferences_android 2.4.27`, and `url_launcher_android 6.3.32` plugins each declare API 24. No resolved approved G1 dependency was observed to require more than API 24. The dependency blocker is closed without downgrading packages.
 
-Acceptable resolution paths are limited to:
+## Remaining device blocker
 
-1. select and verify an API-23-compatible `supabase_flutter` dependency graph during an explicitly scoped G1 dependency-resolution task; or
-2. obtain an explicit owner/change-control decision raising the minimum SDK.
+Initial inspection found:
 
-The first path preserves the frozen device baseline and is recommended.
+- no physical Android device;
+- no existing AVD;
+- no Android Studio installation;
+- command-line SDK tooling is available;
+- no Emulator package or system image installed.
 
-Separately, provision an Android emulator image or connect a supported physical device before G1 exit verification. This is an exit-evidence obligation, not authority to open another gate.
+The official Emulator 37.1.11 and API 36 Google APIs x86_64 image were requested. `sdkmanager` stalled before writing archive data. A direct request confirmed the official emulator archive was reachable and 421.4 MiB, but throughput was approximately 122–140 KiB/s; the transfer was stopped at 6,254,592 bytes (about 5.96 MiB), with roughly one hour estimated for the emulator archive alone. The partial SDK-temporary download is resumable. No AVD could be created or launched, so `flutter devices` still lists only Windows, Chrome, and Edge.
 
 ## Scope conclusion
 
-Preflight documentation and the version-control baseline are complete, but the API 23 dependency contradiction prevents a `READY FOR G1 EXECUTION` conclusion.
+The platform/dependency revision is complete, but the required Android target is not available. The result remains **NOT READY FOR G1 EXECUTION**.
 
 Gate state remains:
 
