@@ -1,0 +1,29 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:ward_al_rawdah/features/auth/data/auth_providers.dart';
+import 'package:ward_al_rawdah/features/auth/presentation/login_page.dart';
+
+import 'fake_auth_repository.dart';
+
+void main() {
+  testWidgets('validates email and password before sign-in', (tester) async {
+    final repository = FakeAuthRepository();
+    addTearDown(repository.dispose);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [authRepositoryProvider.overrideWithValue(repository)],
+        child: const MaterialApp(home: LoginPage()),
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.byKey(const Key('login_submit')));
+    await tester.pump();
+
+    expect(find.text('أدخل بريدًا إلكترونيًا صحيحًا'), findsOneWidget);
+    expect(find.text('كلمة المرور يجب ألا تقل عن 6 أحرف'), findsOneWidget);
+    expect(repository.signInCalls, 0);
+  });
+}
