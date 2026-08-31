@@ -1,9 +1,14 @@
 # G1 Dependency Manifest
 
-Status: **BASELINE RECORDED — COMPATIBLE WITH OWNER-APPROVED API 24**
+Status: **G1 VERIFIED — LOCK UNCHANGED — COMPATIBLE WITH OWNER-APPROVED API 24**
 Date: 2026-08-30
 
 This manifest distinguishes the owner-approved G1 foundation from packages already present in the prototype. No package was added, removed, upgraded, or downgraded during preflight.
+
+Substantive G1 execution also required no dependency mutation. `flutter pub get`
+completed successfully, `pubspec.lock` remained unchanged and tracked, and the
+full analyzer, test, Android build, and runtime checks passed with the versions
+recorded below.
 
 ## Approved G1 foundation dependencies
 

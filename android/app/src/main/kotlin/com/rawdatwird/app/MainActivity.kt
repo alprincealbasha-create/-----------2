@@ -1,4 +1,4 @@
-package sa.wardalrawdah.ward_al_rawdah
+package com.rawdatwird.app
 
 import io.flutter.embedding.android.FlutterActivity
 

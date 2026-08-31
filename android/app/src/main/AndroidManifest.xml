@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="ward_al_rawdah"
+        android:label="ورد الروضة"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
