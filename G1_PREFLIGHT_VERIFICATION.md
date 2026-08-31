@@ -1,9 +1,9 @@
 # G1 Preflight Verification
 
 Preflight ID: `G1-PREFLIGHT-02`
-Date: 2026-08-30  
-Frozen authority: `RW-G0-FROZEN-001`  
-Final result: **NOT READY FOR G1 EXECUTION**
+Date: 2026-08-31
+Frozen authority: `RW-G0-FROZEN-001`
+Final result: **READY FOR G1 EXECUTION**
 
 ## Verification matrix
 
@@ -17,7 +17,7 @@ Final result: **NOT READY FOR G1 EXECUTION**
 | Minimum SDK decision resolved | PASS | Limited owner revision sets API 24, matching Flutter 3.47.1 and the highest observed resolved dependency requirement |
 | Target/compile SDK resolved | PASS | API 36, matching installed stable Android SDK and Flutter 3.47.1 defaults |
 | OD-025 device baseline recorded | PASS | Android phones/tablets; API 24; validation priority Android 8+; iOS post-MVP |
-| Supported Android device/emulator available | **FAIL — DEVICE BLOCKER** | No physical Android device, existing AVD, Emulator package, or installed system image is available |
+| Supported Android device/emulator available | PASS | Running `rawdat_wird_api36` AVD is recognized by Flutter as `emulator-5554`, Android 16/API 36, `android-x64` |
 | Toolchain inspected with required commands | PASS | `flutter --version`, `dart --version`, and `flutter doctor -v` executed |
 | Android toolchain has a blocking doctor issue | PASS (NONE) | Android SDK 36, Java 17, licenses accepted; Windows Visual Studio issue is out of scope |
 | Git root understood | PASS | No `.git` existed in project root or any inspected parent before initialization |
@@ -44,7 +44,7 @@ The baseline commit contains 267 existing project files and the frozen governanc
 
 The owner revised OD-025 from API 23 to API 24. The resolved `app_links 7.2.1`, `shared_preferences_android 2.4.27`, and `url_launcher_android 6.3.32` plugins each declare API 24. No resolved approved G1 dependency was observed to require more than API 24. The dependency blocker is closed without downgrading packages.
 
-## Remaining device blocker
+## Android runtime-target resolution
 
 Initial inspection found:
 
@@ -54,11 +54,21 @@ Initial inspection found:
 - command-line SDK tooling is available;
 - no Emulator package or system image installed.
 
-The official Emulator 37.1.11 and API 36 Google APIs x86_64 image were requested. `sdkmanager` stalled before writing archive data. A direct request confirmed the official emulator archive was reachable and 421.4 MiB, but throughput was approximately 122–140 KiB/s; the transfer was stopped at 6,254,592 bytes (about 5.96 MiB), with roughly one hour estimated for the emulator archive alone. The partial SDK-temporary download is resumable. No AVD could be created or launched, so `flutter devices` still lists only Windows, Chrome, and Edge.
+The physical-device recheck found no ADB device. The existing official Emulator archive was resumed rather than restarted, assembled from verified byte ranges, and validated against its repository SHA-1 (`54fa750822ff462d57e04fc8e98e60f08df2bb61`). Android Emulator `37.1.11` was then installed.
+
+The official API 36 Google APIs x86_64 image was downloaded in non-overlapping ranges, assembled to exactly 1,895,447,397 bytes, and validated against its repository SHA-1 (`c6bf44bdcd885bb902b4ba752d111a073ad7a817`) before installation.
+
+AVD `rawdat_wird_api36` was created with the Pixel 7 hardware profile and launched in development/test-only headless mode. ADB reported `sys.boot_completed=1`, Android release `16`, and SDK `36`. Final `flutter devices` evidence:
+
+```text
+sdk gphone64 x86 64 (mobile) • emulator-5554 • android-x64 • Android 16 (API 36) (emulator)
+```
+
+`flutter emulators` also lists `rawdat_wird_api36`. The runtime-target blocker is closed.
 
 ## Scope conclusion
 
-The platform/dependency revision is complete, but the required Android target is not available. The result remains **NOT READY FOR G1 EXECUTION**.
+Both preflight blockers are resolved. At least one supported Android target is running and recognized by Flutter. The result is **READY FOR G1 EXECUTION**.
 
 Gate state remains:
 

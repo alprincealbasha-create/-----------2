@@ -1,9 +1,9 @@
 # G1 Preflight Remediation Record
 
 Remediation ID: `G1-PREFLIGHT-02`
-Date: 2026-08-30
+Date: 2026-08-31
 Authority: owner instruction `G1-PREFLIGHT-02`; frozen baseline `RW-G0-FROZEN-001` remains authoritative except for the explicit limited OD-025 revision below
-Final status: **NOT READY FOR G1 EXECUTION**
+Final status: **READY FOR G1 EXECUTION**
 
 ## 1. Original blockers
 
@@ -51,9 +51,21 @@ Requested setup:
 - Android API 36 Google APIs x86_64 system image;
 - intended development/test-only AVD after installation.
 
-The deprecated `sdkmanager` reached `Preparing "Install Android Emulator v.37.1.11"` but created a zero-byte archive and stopped progressing. The newer `android sdk` bootstrap also stalled. Direct HTTPS verification of the official archive succeeded (`200 OK`, 441,926,448 bytes). A resumable direct download then transferred at about 122–140 KiB/s and was stopped at 6,254,592 bytes (about 5.96 MiB) because the emulator archive alone was estimated to require about one hour, before downloading the larger system image.
+The deprecated `sdkmanager` reached `Preparing "Install Android Emulator v.37.1.11"` but initially created a zero-byte archive and stopped progressing. The newer `android sdk` bootstrap also stalled. Direct HTTPS verification of the official archive succeeded. Its existing partial download was resumed, not restarted, and the remaining byte ranges were downloaded separately. The assembled 441,926,448-byte archive matched the official SHA-1 `54fa750822ff462d57e04fc8e98e60f08df2bb61`. Android Emulator `37.1.11` then installed successfully.
 
-Result: no emulator package, system image, AVD, or Android runtime target is yet available. The device blocker remains open.
+The API 36 Google APIs x86_64 system image download exhibited the same SDK-manager stall. Its exact repository metadata was read for package `system-images;android-36;google_apis;x86_64`. Non-overlapping byte ranges were downloaded and resumed without discarding completed data. The assembled image was exactly 1,895,447,397 bytes and matched official SHA-1 `c6bf44bdcd885bb902b4ba752d111a073ad7a817`; installation succeeded.
+
+AVD result:
+
+- name: `rawdat_wird_api36`;
+- hardware profile: Pixel 7;
+- system image: Google APIs x86_64 API 36;
+- Android release: 16;
+- ADB identifier: `emulator-5554`;
+- boot verification: `sys.boot_completed=1`;
+- Flutter status: recognized as an Android mobile target.
+
+The device blocker is closed.
 
 ## 5. Commands executed
 
@@ -65,6 +77,10 @@ flutter devices --no-version-check
 avdmanager.bat list avd
 sdkmanager.bat --list_installed
 flutter doctor -v
+adb devices -l
+adb -s emulator-5554 shell getprop sys.boot_completed
+adb -s emulator-5554 shell getprop ro.build.version.release
+adb -s emulator-5554 shell getprop ro.build.version.sdk
 ```
 
 Setup attempts:
@@ -75,25 +91,31 @@ sdkmanager.bat --verbose emulator system-images;android-36;google_apis;x86_64
 android.exe sdk --help
 curl.exe -I https://dl.google.com/android/repository/emulator-windows_x64-15917651.zip
 curl.exe -L --fail --retry 3 --continue-at - --output <SDK temporary archive> <official archive URL>
+curl.exe --range <start-end> --output <verified temporary part> <official archive URL>
+sdkmanager.bat --verbose emulator
+sdkmanager.bat --verbose system-images;android-36;google_apis;x86_64
+avdmanager.bat create avd --name rawdat_wird_api36 --package system-images;android-36;google_apis;x86_64 --device pixel_7
+emulator.exe -avd rawdat_wird_api36 -no-window -no-audio -no-boot-anim -no-snapshot-save
+flutter devices --no-version-check
 ```
 
 No Supabase environment, production database, migration, application feature, or real user data was accessed.
 
-## 6. Remaining risks and remediation
+## 6. Remaining risks and controls
 
-- Complete or resume installation of the official Emulator and API 36 system image when adequate download throughput is available, then create and launch a development/test-only AVD.
-- Alternatively, connect an authorized physical Android device running API 24 or newer; Android 8.0+ is preferred.
-- Re-run `flutter devices` and require an Android target before declaring preflight ready.
-- Substantive G1 implementation and all G2+ work remain prohibited while this preflight result is not ready.
+- The local AVD is development/test-only and may need to be recreated on another workstation.
+- `avdmanager` emitted a non-blocking warning while reading a system-image `devices.xml`; creation, launch, ADB boot verification, and Flutter discovery all succeeded despite it.
+- The current task proves target availability only. Building/running the minimal foundation remains substantive G1 verification, not preflight work.
+- Opening G2 remains prohibited until G1 implementation, exit evidence, and owner approval are complete.
 
 ## 7. Final readiness
 
 - Dependency/API blocker: **RESOLVED**.
-- Android target blocker: **OPEN**.
-- Git baseline: valid; final documentation commit required before reporting clean status.
+- Android target blocker: **RESOLVED**.
+- Git baseline: valid; working tree must be clean after recording this closure update.
 - G2+ implementation: none.
 
-Final result: **NOT READY FOR G1 EXECUTION**.
+Final result: **READY FOR G1 EXECUTION**.
 
 Gate state remains:
 

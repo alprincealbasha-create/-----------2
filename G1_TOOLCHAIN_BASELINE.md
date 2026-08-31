@@ -1,7 +1,7 @@
 # G1 Toolchain Baseline
 
-Status: **RECORDED — DEPENDENCY COMPATIBILITY RESOLVED; DEVICE BLOCKER OPEN**
-Date: 2026-08-30  
+Status: **RECORDED — G1 PREFLIGHT READY**
+Date: 2026-08-31
 Authority: `GD-G0-FINAL`, `RW-G0-FROZEN-001`, OD-014, and the owner-approved limited OD-025 revision in `G1-PREFLIGHT-02`
 
 ## Selected owner baseline
@@ -35,8 +35,8 @@ The required commands were run from the project root.
 | Android SDK | SDK `36.0.0`; platform `android-36`; build-tools `36.0.0` |
 | Android licenses | All accepted |
 | Android toolchain doctor result | PASS |
-| Connected Android target | None after re-verification |
-| Installed Android emulator source | None; installation was attempted but could not complete in this environment |
+| Connected Android target | `emulator-5554`; Android 16/API 36; `android-x64`; boot completed |
+| Installed Android emulator source | AVD `rawdat_wird_api36`, Pixel 7 profile, Google APIs x86_64 API 36 |
 
 `flutter doctor -v` reported only the absence of Visual Studio for Windows desktop development. Windows desktop is outside the Android-first MVP and this is not a G1 Android blocker.
 
@@ -65,11 +65,11 @@ This requirement was discovered by reading `.flutter-plugins-dependencies`, reso
 
 The owner revised OD-025 from API 23 to API 24 in `G1-PREFLIGHT-02`. API 24 now matches Flutter 3.47.1's default and the highest observed requirement in the resolved graph. No core dependency downgrade is required.
 
-### Android run target — blocking
+### Android run target — resolved
 
-Android Studio is not installed. Command-line SDK tools, `sdkmanager`, `avdmanager`, and `adb` are available, but the Emulator package and system images were absent. Installation of Emulator `37.1.11` and an API 36 Google APIs x86_64 image was attempted. The legacy SDK manager stalled after creating a zero-byte archive; direct access to the official 421.4 MiB emulator archive succeeded but transferred at about 122–140 KiB/s, implying roughly one hour for that archive before the larger system image. The transfer was stopped at 6,254,592 bytes (about 5.96 MiB) and remains resumable in the SDK temporary directory.
+Android Studio is not installed, but it was not required. Command-line SDK tools installed Android Emulator `37.1.11` and `system-images;android-36;google_apis;x86_64`. Both official archives were reconstructed from safely resumed/non-overlapping byte ranges after SDK-manager download stalls and were verified against their repository sizes and SHA-1 values before installation.
 
-No Android Virtual Device could therefore be created or launched, and `flutter devices` still has no Android target. This remains the only preflight blocker.
+AVD `rawdat_wird_api36` was created with a Pixel 7 profile and launched in development/test-only headless mode. ADB verified Android 16/API 36 and completed boot. `flutter devices` recognizes it as `emulator-5554`, an Android x64 mobile target. No preflight blocker remains.
 
 ## G1 boundary
 
