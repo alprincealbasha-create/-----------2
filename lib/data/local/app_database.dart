@@ -71,6 +71,19 @@ class AppDatabase extends _$AppDatabase {
     return row.read(countExpression) ?? 0;
   }
 
+  Future<void> clearSyncedUserData(String userId) => transaction(() async {
+    if (await pendingMutationCount(userId) != 0) {
+      throw StateError('Pending local progress prevents account cleanup');
+    }
+    await (delete(
+          dhikrMutations,
+        )..where((row) => row.userId.equals(userId) & row.syncedAt.isNotNull()))
+        .go();
+    await (delete(
+      dhikrSessions,
+    )..where((row) => row.userId.equals(userId))).go();
+  });
+
   Future<void> createDhikrSession({
     required String id,
     required String userId,

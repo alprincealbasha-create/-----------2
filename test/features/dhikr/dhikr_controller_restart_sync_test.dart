@@ -43,7 +43,13 @@ void main() {
 class _AuthenticatedController extends AuthController {
   @override
   AuthState build() => const AuthState.authenticated(
-    AuthUser(id: 'user-1', role: AppRole.member),
+    AuthUser(
+      id: 'user-1',
+      organizationId: 'organization-1',
+      branchId: 'branch-1',
+      classId: 'class-1',
+      role: AppRole.student,
+    ),
   );
 }
 

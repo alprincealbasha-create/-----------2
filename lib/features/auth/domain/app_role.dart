@@ -1,6 +1,10 @@
 enum AppRole {
-  member('member'),
-  admin('admin');
+  organizationAdmin('organization_admin'),
+  branchManager('branch_manager'),
+  admin('admin'),
+  teacher('teacher'),
+  staff('staff'),
+  student('student');
 
   const AppRole(this.value);
 
@@ -12,4 +16,6 @@ enum AppRole {
       orElse: () => throw const FormatException('Unknown application role'),
     );
   }
+
+  bool get isOrganizationScoped => this == AppRole.organizationAdmin;
 }

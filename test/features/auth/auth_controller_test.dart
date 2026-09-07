@@ -13,7 +13,7 @@ void main() {
   test('restores an existing session and resolves its role', () async {
     final repository = FakeAuthRepository(
       currentUserId: 'member-1',
-      role: AppRole.member,
+      role: AppRole.student,
     );
     final container = _container(repository);
     addTearDown(container.dispose);
@@ -25,7 +25,13 @@ void main() {
     expect(
       container.read(authControllerProvider),
       const AuthState.authenticated(
-        AuthUser(id: 'member-1', role: AppRole.member),
+        AuthUser(
+          id: 'member-1',
+          organizationId: 'organization-1',
+          branchId: 'branch-1',
+          classId: 'class-1',
+          role: AppRole.student,
+        ),
       ),
     );
   });
@@ -61,10 +67,49 @@ void main() {
     expect(
       container.read(authControllerProvider),
       const AuthState.authenticated(
-        AuthUser(id: 'signed-in-user', role: AppRole.admin),
+        AuthUser(
+          id: 'signed-in-user',
+          organizationId: 'organization-1',
+          branchId: 'branch-1',
+          role: AppRole.admin,
+        ),
       ),
     );
   });
+
+  test(
+    'student login uses the trusted exchange and resolves its context',
+    () async {
+      final repository = FakeAuthRepository(role: AppRole.student);
+      final container = _container(repository);
+      addTearDown(container.dispose);
+      addTearDown(repository.dispose);
+      await pumpEventQueue();
+
+      await container
+          .read(authControllerProvider.notifier)
+          .signInStudent(
+            organizationCode: 'RW-ONE',
+            studentCode: 'ST-001',
+            pin: '123456',
+          );
+      await pumpEventQueue();
+
+      expect(repository.studentSignInCalls, 1);
+      expect(
+        container.read(authControllerProvider),
+        const AuthState.authenticated(
+          AuthUser(
+            id: 'signed-in-student',
+            organizationId: 'organization-1',
+            branchId: 'branch-1',
+            classId: 'class-1',
+            role: AppRole.student,
+          ),
+        ),
+      );
+    },
+  );
 
   test('keeps a safe unauthenticated state on sign-in failure', () async {
     final repository = FakeAuthRepository()

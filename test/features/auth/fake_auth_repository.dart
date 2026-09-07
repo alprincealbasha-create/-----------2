@@ -1,10 +1,11 @@
 import 'dart:async';
 
-import 'package:ward_al_rawdah/features/auth/domain/app_role.dart';
 import 'package:ward_al_rawdah/features/auth/domain/auth_repository.dart';
+import 'package:ward_al_rawdah/features/auth/domain/auth_user.dart';
+import 'package:ward_al_rawdah/features/auth/domain/app_role.dart';
 
 class FakeAuthRepository implements AuthRepository {
-  FakeAuthRepository({this.currentUserId, this.role = AppRole.member});
+  FakeAuthRepository({this.currentUserId, this.role = AppRole.student});
 
   final StreamController<String?> _userIds =
       StreamController<String?>.broadcast();
@@ -17,16 +18,35 @@ class FakeAuthRepository implements AuthRepository {
   Object? roleError;
   var signInCalls = 0;
   var signOutCalls = 0;
+  var studentSignInCalls = 0;
 
   @override
   Stream<String?> get userIdChanges => _userIds.stream;
 
   @override
-  Future<AppRole> loadRole(String userId) async {
+  Future<AuthUser> loadAuthorizationContext(String userId) async {
     if (roleError case final error?) {
       throw error;
     }
-    return role;
+    return AuthUser(
+      id: userId,
+      organizationId: 'organization-1',
+      branchId: role == AppRole.organizationAdmin ? null : 'branch-1',
+      classId: role == AppRole.student ? 'class-1' : null,
+      role: role,
+    );
+  }
+
+  @override
+  Future<void> signInStudent({
+    required String organizationCode,
+    required String studentCode,
+    required String pin,
+  }) async {
+    studentSignInCalls++;
+    if (signInError case final error?) throw error;
+    currentUserId = 'signed-in-student';
+    _userIds.add(currentUserId);
   }
 
   @override

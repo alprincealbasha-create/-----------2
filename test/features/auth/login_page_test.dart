@@ -26,4 +26,32 @@ void main() {
     expect(find.text('كلمة المرور يجب ألا تقل عن 6 أحرف'), findsOneWidget);
     expect(repository.signInCalls, 0);
   });
+
+  testWidgets(
+    'student login requires organization, student code, and six digit PIN',
+    (tester) async {
+      final repository = FakeAuthRepository();
+      addTearDown(repository.dispose);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [authRepositoryProvider.overrideWithValue(repository)],
+          child: const MaterialApp(home: LoginPage()),
+        ),
+      );
+      await tester.pump();
+
+      await tester.tap(find.text('طالب'));
+      await tester.pump();
+      await tester.enterText(
+        find.byKey(const Key('organization_code')),
+        'RW-ONE',
+      );
+      await tester.enterText(find.byKey(const Key('student_code')), 'ST-001');
+      await tester.enterText(find.byKey(const Key('student_pin')), '123456');
+      await tester.tap(find.byKey(const Key('login_submit')));
+      await tester.pump();
+
+      expect(repository.studentSignInCalls, 1);
+    },
+  );
 }

@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ward_al_rawdah/features/auth/data/auth_providers.dart';
 import 'package:ward_al_rawdah/features/auth/domain/auth_repository.dart';
 import 'package:ward_al_rawdah/features/auth/domain/auth_state.dart';
-import 'package:ward_al_rawdah/features/auth/domain/auth_user.dart';
 
 final authControllerProvider = NotifierProvider<AuthController, AuthState>(
   AuthController.new,
@@ -61,6 +60,36 @@ class AuthController extends Notifier<AuthState> {
     }
   }
 
+  Future<void> signInStudent({
+    required String organizationCode,
+    required String studentCode,
+    required String pin,
+  }) async {
+    final request = ++_requestNumber;
+    state = const AuthState.loading();
+    try {
+      final repository = ref.read(authRepositoryProvider);
+      await repository.signInStudent(
+        organizationCode: organizationCode,
+        studentCode: studentCode,
+        pin: pin,
+      );
+      if (request == _requestNumber) {
+        await _resolveUser(repository.currentUserId);
+      }
+    } on SignInFailure catch (error) {
+      if (!_disposed && request == _requestNumber) {
+        state = AuthState.unauthenticated(message: error.userMessage);
+      }
+    } catch (_) {
+      if (!_disposed && request == _requestNumber) {
+        state = const AuthState.unauthenticated(
+          message: 'تعذر تسجيل الدخول. حاول مرة أخرى.',
+        );
+      }
+    }
+  }
+
   Future<void> signOut() async {
     final previousState = state;
     ++_requestNumber;
@@ -97,9 +126,11 @@ class AuthController extends Notifier<AuthState> {
     }
 
     try {
-      final role = await ref.read(authRepositoryProvider).loadRole(userId);
+      final user = await ref
+          .read(authRepositoryProvider)
+          .loadAuthorizationContext(userId);
       if (!_disposed && request == _requestNumber) {
-        state = AuthState.authenticated(AuthUser(id: userId, role: role));
+        state = AuthState.authenticated(user);
       }
     } on RoleResolutionFailure catch (error) {
       if (!_disposed && request == _requestNumber) {

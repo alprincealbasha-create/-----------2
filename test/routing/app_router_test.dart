@@ -6,9 +6,21 @@ import 'package:ward_al_rawdah/routing/app_router.dart';
 
 void main() {
   group('role based redirect', () {
+    test('maps every approved role to its isolated shell', () {
+      expect(
+        routeForRole(AppRole.organizationAdmin),
+        AppRoutes.organizationAdmin,
+      );
+      expect(routeForRole(AppRole.branchManager), AppRoutes.branchManager);
+      expect(routeForRole(AppRole.admin), AppRoutes.admin);
+      expect(routeForRole(AppRole.teacher), AppRoutes.teacher);
+      expect(routeForRole(AppRole.staff), AppRoutes.staff);
+      expect(routeForRole(AppRole.student), AppRoutes.student);
+    });
+
     test('keeps loading sessions on splash', () {
       expect(
-        redirectForAuthState(const AuthState.loading(), AppRoutes.memberHome),
+        redirectForAuthState(const AuthState.loading(), AppRoutes.student),
         AppRoutes.splash,
       );
     });
@@ -17,21 +29,27 @@ void main() {
       expect(
         redirectForAuthState(
           const AuthState.unauthenticated(),
-          AppRoutes.adminDashboard,
+          AppRoutes.admin,
         ),
         AppRoutes.login,
       );
     });
 
-    test('sends members away from the admin route', () {
+    test('sends students away from the admin route', () {
       expect(
         redirectForAuthState(
           const AuthState.authenticated(
-            AuthUser(id: 'member-1', role: AppRole.member),
+            AuthUser(
+              id: 'student-1',
+              organizationId: 'organization-1',
+              branchId: 'branch-1',
+              classId: 'class-1',
+              role: AppRole.student,
+            ),
           ),
-          AppRoutes.adminDashboard,
+          AppRoutes.admin,
         ),
-        AppRoutes.memberHome,
+        AppRoutes.student,
       );
     });
 
@@ -39,11 +57,16 @@ void main() {
       expect(
         redirectForAuthState(
           const AuthState.authenticated(
-            AuthUser(id: 'admin-1', role: AppRole.admin),
+            AuthUser(
+              id: 'admin-1',
+              organizationId: 'organization-1',
+              branchId: 'branch-1',
+              role: AppRole.admin,
+            ),
           ),
-          AppRoutes.memberHome,
+          AppRoutes.student,
         ),
-        AppRoutes.adminDashboard,
+        AppRoutes.admin,
       );
     });
 
@@ -51,9 +74,15 @@ void main() {
       expect(
         redirectForAuthState(
           const AuthState.authenticated(
-            AuthUser(id: 'member-1', role: AppRole.member),
+            AuthUser(
+              id: 'student-1',
+              organizationId: 'organization-1',
+              branchId: 'branch-1',
+              classId: 'class-1',
+              role: AppRole.student,
+            ),
           ),
-          AppRoutes.memberHome,
+          AppRoutes.student,
         ),
         isNull,
       );
@@ -63,7 +92,7 @@ void main() {
       expect(
         redirectForAuthState(
           const AuthState.authorizationFailure('تعذر تحديد الدور'),
-          AppRoutes.memberHome,
+          AppRoutes.student,
         ),
         AppRoutes.authorizationFailure,
       );

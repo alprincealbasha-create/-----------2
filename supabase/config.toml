@@ -1,0 +1,5 @@
+[functions.student-login]
+verify_jwt = false
+
+[functions.manage-membership]
+verify_jwt = true

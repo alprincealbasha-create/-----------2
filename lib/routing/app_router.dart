@@ -1,22 +1,25 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ward_al_rawdah/features/admin/presentation/admin_dashboard_page.dart';
 import 'package:ward_al_rawdah/features/auth/application/auth_controller.dart';
 import 'package:ward_al_rawdah/features/auth/domain/app_role.dart';
 import 'package:ward_al_rawdah/features/auth/domain/auth_state.dart';
 import 'package:ward_al_rawdah/features/auth/presentation/authorization_failure_page.dart';
 import 'package:ward_al_rawdah/features/auth/presentation/login_page.dart';
+import 'package:ward_al_rawdah/features/auth/presentation/role_shell_page.dart';
 import 'package:ward_al_rawdah/features/auth/presentation/splash_page.dart';
-import 'package:ward_al_rawdah/features/home/presentation/member_home_page.dart';
-import 'package:ward_al_rawdah/features/dhikr/presentation/dhikr_screen.dart';
 
 abstract final class AppRoutes {
   static const splash = '/';
   static const login = '/login';
-  static const memberHome = '/home';
-  static const dhikr = '/home/dhikr';
-  static const adminDashboard = '/admin';
+  static const organizationAdmin = '/organization-admin';
+  static const branchManager = '/branch-manager';
+  static const admin = '/admin';
+  static const teacher = '/teacher';
+  static const staff = '/staff';
+  static const student = '/student';
+  // Legacy prototype destination is intentionally not registered in Stage 3.
+  static const dhikr = '/student/dhikr';
   static const authorizationFailure = '/access-denied';
 }
 
@@ -37,22 +40,28 @@ String? redirectForAuthState(AuthState state, String location) {
 }
 
 String? _redirectAuthenticated(AppRole role, String location) {
-  final destination = switch (role) {
-    AppRole.member => AppRoutes.memberHome,
-    AppRole.admin => AppRoutes.adminDashboard,
-  };
+  final destination = routeForRole(role);
 
   final isPublicRoute =
       location == AppRoutes.splash ||
       location == AppRoutes.login ||
       location == AppRoutes.authorizationFailure;
-  final isWrongRoleRoute = switch (role) {
-    AppRole.member => location.startsWith(AppRoutes.adminDashboard),
-    AppRole.admin => location.startsWith(AppRoutes.memberHome),
-  };
+  final isRoleRoute = AppRole.values
+      .map(routeForRole)
+      .any((route) => location == route || location.startsWith('$route/'));
+  final isWrongRoleRoute = isRoleRoute && !location.startsWith(destination);
 
   return isPublicRoute || isWrongRoleRoute ? destination : null;
 }
+
+String routeForRole(AppRole role) => switch (role) {
+  AppRole.organizationAdmin => AppRoutes.organizationAdmin,
+  AppRole.branchManager => AppRoutes.branchManager,
+  AppRole.admin => AppRoutes.admin,
+  AppRole.teacher => AppRoutes.teacher,
+  AppRole.staff => AppRoutes.staff,
+  AppRole.student => AppRoutes.student,
+};
 
 final _routerRefreshProvider = Provider<_RouterRefreshNotifier>((ref) {
   final notifier = _RouterRefreshNotifier(ref);
@@ -78,18 +87,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.login,
         builder: (context, state) => const LoginPage(),
       ),
-      GoRoute(
-        path: AppRoutes.memberHome,
-        builder: (context, state) => const MemberHomePage(),
-      ),
-      GoRoute(
-        path: AppRoutes.dhikr,
-        builder: (context, state) => const DhikrScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.adminDashboard,
-        builder: (context, state) => const AdminDashboardPage(),
-      ),
+      for (final role in AppRole.values)
+        GoRoute(
+          path: routeForRole(role),
+          builder: (context, state) => RoleShellPage(role: role),
+        ),
       GoRoute(
         path: AppRoutes.authorizationFailure,
         builder: (context, state) => const AuthorizationFailurePage(),

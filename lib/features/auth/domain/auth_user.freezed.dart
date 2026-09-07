@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AuthUser {
 
- String get id; AppRole get role;
+ String get id; String get organizationId; AppRole get role; String? get branchId; String? get classId;
 /// Create a copy of AuthUser
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $AuthUserCopyWith<AuthUser> get copyWith => _$AuthUserCopyWithImpl<AuthUser>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthUser&&(identical(other.id, id) || other.id == id)&&(identical(other.role, role) || other.role == role));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthUser&&(identical(other.id, id) || other.id == id)&&(identical(other.organizationId, organizationId) || other.organizationId == organizationId)&&(identical(other.role, role) || other.role == role)&&(identical(other.branchId, branchId) || other.branchId == branchId)&&(identical(other.classId, classId) || other.classId == classId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,role);
+int get hashCode => Object.hash(runtimeType,id,organizationId,role,branchId,classId);
 
 @override
 String toString() {
-  return 'AuthUser(id: $id, role: $role)';
+  return 'AuthUser(id: $id, organizationId: $organizationId, role: $role, branchId: $branchId, classId: $classId)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $AuthUserCopyWith<$Res>  {
   factory $AuthUserCopyWith(AuthUser value, $Res Function(AuthUser) _then) = _$AuthUserCopyWithImpl;
 @useResult
 $Res call({
- String id, AppRole role
+ String id, String organizationId, AppRole role, String? branchId, String? classId
 });
 
 
@@ -63,11 +63,14 @@ class _$AuthUserCopyWithImpl<$Res>
 
 /// Create a copy of AuthUser
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? role = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? organizationId = null,Object? role = null,Object? branchId = freezed,Object? classId = freezed,}) {
   return _then(AuthUser(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,organizationId: null == organizationId ? _self.organizationId : organizationId // ignore: cast_nullable_to_non_nullable
 as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
-as AppRole,
+as AppRole,branchId: freezed == branchId ? _self.branchId : branchId // ignore: cast_nullable_to_non_nullable
+as String?,classId: freezed == classId ? _self.classId : classId // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -152,10 +155,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  AppRole role)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String organizationId,  AppRole role,  String? branchId,  String? classId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuthUser() when $default != null:
-return $default(_that.id,_that.role);case _:
+return $default(_that.id,_that.organizationId,_that.role,_that.branchId,_that.classId);case _:
   return orElse();
 
 }
@@ -173,10 +176,10 @@ return $default(_that.id,_that.role);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  AppRole role)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String organizationId,  AppRole role,  String? branchId,  String? classId)  $default,) {final _that = this;
 switch (_that) {
 case _AuthUser():
-return $default(_that.id,_that.role);case _:
+return $default(_that.id,_that.organizationId,_that.role,_that.branchId,_that.classId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -193,10 +196,10 @@ return $default(_that.id,_that.role);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  AppRole role)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String organizationId,  AppRole role,  String? branchId,  String? classId)?  $default,) {final _that = this;
 switch (_that) {
 case _AuthUser() when $default != null:
-return $default(_that.id,_that.role);case _:
+return $default(_that.id,_that.organizationId,_that.role,_that.branchId,_that.classId);case _:
   return null;
 
 }
@@ -208,11 +211,14 @@ return $default(_that.id,_that.role);case _:
 
 
 class _AuthUser implements AuthUser {
-  const _AuthUser({required this.id, required this.role});
+  const _AuthUser({required this.id, required this.organizationId, required this.role, this.branchId, this.classId});
   
 
 @override final  String id;
+@override final  String organizationId;
 @override final  AppRole role;
+@override final  String? branchId;
+@override final  String? classId;
 
 /// Create a copy of AuthUser
 /// with the given fields replaced by the non-null parameter values.
@@ -224,16 +230,16 @@ _$AuthUserCopyWith<_AuthUser> get copyWith => __$AuthUserCopyWithImpl<_AuthUser>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthUser&&(identical(other.id, id) || other.id == id)&&(identical(other.role, role) || other.role == role));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthUser&&(identical(other.id, id) || other.id == id)&&(identical(other.organizationId, organizationId) || other.organizationId == organizationId)&&(identical(other.role, role) || other.role == role)&&(identical(other.branchId, branchId) || other.branchId == branchId)&&(identical(other.classId, classId) || other.classId == classId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,role);
+int get hashCode => Object.hash(runtimeType,id,organizationId,role,branchId,classId);
 
 @override
 String toString() {
-  return 'AuthUser(id: $id, role: $role)';
+  return 'AuthUser(id: $id, organizationId: $organizationId, role: $role, branchId: $branchId, classId: $classId)';
 }
 
 
@@ -244,7 +250,7 @@ abstract mixin class _$AuthUserCopyWith<$Res> implements $AuthUserCopyWith<$Res>
   factory _$AuthUserCopyWith(_AuthUser value, $Res Function(_AuthUser) _then) = __$AuthUserCopyWithImpl;
 @override @useResult
 $Res call({
- String id, AppRole role
+ String id, String organizationId, AppRole role, String? branchId, String? classId
 });
 
 
@@ -261,11 +267,14 @@ class __$AuthUserCopyWithImpl<$Res>
 
 /// Create a copy of AuthUser
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? role = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? organizationId = null,Object? role = null,Object? branchId = freezed,Object? classId = freezed,}) {
   return _then(_AuthUser(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,organizationId: null == organizationId ? _self.organizationId : organizationId // ignore: cast_nullable_to_non_nullable
 as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
-as AppRole,
+as AppRole,branchId: freezed == branchId ? _self.branchId : branchId // ignore: cast_nullable_to_non_nullable
+as String?,classId: freezed == classId ? _self.classId : classId // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
