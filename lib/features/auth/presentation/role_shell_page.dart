@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ward_al_rawdah/features/auth/application/auth_controller.dart';
 import 'package:ward_al_rawdah/features/auth/domain/app_role.dart';
+import 'package:ward_al_rawdah/features/dhikr_library/presentation/dhikr_library_section.dart';
+import 'package:ward_al_rawdah/features/wird_assignments/presentation/today_wirds_section.dart';
+import 'package:ward_al_rawdah/features/wird_assignments/presentation/wird_management_section.dart';
 
 class RoleShellPage extends ConsumerWidget {
   const RoleShellPage({required this.role, super.key});
@@ -23,29 +26,31 @@ class RoleShellPage extends ConsumerWidget {
           ),
         ],
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.verified_user_outlined, size: 56),
-              const SizedBox(height: 16),
-              Text(
-                _label(role),
-                key: const Key('role_shell_label'),
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'تم التحقق من هويتك وصلاحية حسابك.',
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-      ),
+      body: _body(context),
     );
+  }
+
+  Widget _body(BuildContext context) {
+    if (role == AppRole.organizationAdmin ||
+        role == AppRole.branchManager ||
+        role == AppRole.admin) {
+      return ListView(
+        key: const Key('stage4_management'),
+        padding: const EdgeInsets.all(16),
+        children: [
+          Text(
+            _label(role),
+            key: const Key('role_shell_label'),
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+          const SizedBox(height: 12),
+          const DhikrLibrarySection(),
+          const SizedBox(height: 12),
+          const WirdManagementSection(),
+        ],
+      );
+    }
+    return const TodayWirdsSection();
   }
 
   String _label(AppRole role) => switch (role) {

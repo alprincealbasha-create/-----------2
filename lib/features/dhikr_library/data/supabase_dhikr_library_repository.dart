@@ -8,7 +8,7 @@ class SupabaseDhikrLibraryRepository implements DhikrLibraryRepository {
   final SupabaseClient _client;
 
   static const _fields =
-      'id, title, display_text, description, default_target, status, '
+      'id, owner_branch_id, title, display_text, description, default_target, status, '
       'created_by, source_reference, content_version, content_checksum, '
       'reviewed_by, reviewed_at';
 
@@ -25,53 +25,56 @@ class SupabaseDhikrLibraryRepository implements DhikrLibraryRepository {
 
   @override
   Future<DhikrDefinition> createDefinition({
+    required String organizationId,
     required String title,
     required String displayText,
     required int defaultTarget,
     String? description,
     String? sourceReference,
   }) => _guard('تعذر إنشاء تعريف الذكر.', () async {
-    final row = await _client
-        .from('dhikr_definitions')
-        .insert({
-          'title': _requiredText(title, 'عنوان الذكر مطلوب.'),
-          'display_text': _requiredText(displayText, 'نص العرض مطلوب.'),
-          'description': _optionalText(description),
-          'default_target': _requiredTarget(defaultTarget),
-          'source_reference': _optionalText(sourceReference),
-        })
-        .select(_fields)
-        .single();
-    return DhikrDefinition.fromJson(row);
+    final row = await _client.rpc(
+      'save_dhikr_definition',
+      params: {
+        'p_id': null,
+        'p_organization_id': organizationId,
+        'p_title': _requiredText(title, 'عنوان الذكر مطلوب.'),
+        'p_display_text': _requiredText(displayText, 'نص العرض مطلوب.'),
+        'p_description': _optionalText(description),
+        'p_default_target': _requiredTarget(defaultTarget),
+        'p_status': 'draft',
+        'p_source_reference': _optionalText(sourceReference),
+      },
+    );
+    return DhikrDefinition.fromJson(Map<String, Object?>.from(row as Map));
   });
 
   @override
-  Future<DhikrDefinition> updateDefinition(DhikrDefinition definition) =>
-      _guard('تعذر تحديث تعريف الذكر.', () async {
-        if (definition.status == DhikrDefinitionStatus.approved &&
-            _optionalText(definition.sourceReference) == null) {
-          throw const DhikrLibraryFailure(
-            'مرجع المصدر مطلوب قبل اعتماد الذكر.',
-          );
-        }
-        final row = await _client
-            .from('dhikr_definitions')
-            .update({
-              'title': _requiredText(definition.title, 'عنوان الذكر مطلوب.'),
-              'display_text': _requiredText(
-                definition.displayText,
-                'نص العرض مطلوب.',
-              ),
-              'description': _optionalText(definition.description),
-              'default_target': _requiredTarget(definition.defaultTarget),
-              'status': definition.status.value,
-              'source_reference': _optionalText(definition.sourceReference),
-            })
-            .eq('id', definition.id)
-            .select(_fields)
-            .single();
-        return DhikrDefinition.fromJson(row);
-      });
+  Future<DhikrDefinition> updateDefinition({
+    required String organizationId,
+    required DhikrDefinition definition,
+  }) => _guard('تعذر تحديث تعريف الذكر.', () async {
+    if (definition.status == DhikrDefinitionStatus.approved &&
+        _optionalText(definition.sourceReference) == null) {
+      throw const DhikrLibraryFailure('مرجع المصدر مطلوب قبل اعتماد الذكر.');
+    }
+    final row = await _client.rpc(
+      'save_dhikr_definition',
+      params: {
+        'p_id': definition.id,
+        'p_organization_id': organizationId,
+        'p_title': _requiredText(definition.title, 'عنوان الذكر مطلوب.'),
+        'p_display_text': _requiredText(
+          definition.displayText,
+          'نص العرض مطلوب.',
+        ),
+        'p_description': _optionalText(definition.description),
+        'p_default_target': _requiredTarget(definition.defaultTarget),
+        'p_status': definition.status.value,
+        'p_source_reference': _optionalText(definition.sourceReference),
+      },
+    );
+    return DhikrDefinition.fromJson(Map<String, Object?>.from(row as Map));
+  });
 
   Future<T> _guard<T>(String message, Future<T> Function() action) async {
     try {

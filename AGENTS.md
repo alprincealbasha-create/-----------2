@@ -31,7 +31,8 @@ G0 is frozen by owner decision `GD-G0-FINAL`. Read
 `G0_FROZEN_BASELINE.md` before G1 work. Do not silently edit a frozen G0
 baseline. A substantive change requires a recorded change ID, owner approval,
 affected documents/gates, downstream impact, and an updated baseline version.
-G1, G2, and G3 are approved and closed. G4-G12 are not open.
+G1, G2, G3, and G4 are approved and closed. Stage 4 was closed by the owner
+after its final verification. G5-G12 are not open.
 
 ---
 

@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ward_al_rawdah/features/auth/application/auth_controller.dart';
+import 'package:ward_al_rawdah/features/auth/domain/auth_state.dart';
 import 'package:ward_al_rawdah/features/dhikr_library/data/dhikr_library_providers.dart';
 import 'package:ward_al_rawdah/features/dhikr_library/domain/dhikr_definition.dart';
 import 'package:ward_al_rawdah/features/dhikr_library/domain/dhikr_library_repository.dart';
@@ -24,7 +26,12 @@ class DhikrLibraryController extends AsyncNotifier<List<DhikrDefinition>> {
     String? description,
     String? sourceReference,
   }) => _replaceWith(() async {
+    final organizationId = switch (ref.read(authControllerProvider)) {
+      AuthAuthenticated(:final user) => user.organizationId,
+      _ => throw const DhikrLibraryFailure('تعذر تحديد المؤسسة الحالية.'),
+    };
     await _repository.createDefinition(
+      organizationId: organizationId,
       title: title,
       displayText: displayText,
       defaultTarget: defaultTarget,
@@ -36,7 +43,14 @@ class DhikrLibraryController extends AsyncNotifier<List<DhikrDefinition>> {
 
   Future<void> updateDefinition(DhikrDefinition definition) =>
       _replaceWith(() async {
-        await _repository.updateDefinition(definition);
+        final organizationId = switch (ref.read(authControllerProvider)) {
+          AuthAuthenticated(:final user) => user.organizationId,
+          _ => throw const DhikrLibraryFailure('تعذر تحديد المؤسسة الحالية.'),
+        };
+        await _repository.updateDefinition(
+          organizationId: organizationId,
+          definition: definition,
+        );
         return _repository.listDefinitions();
       }());
 

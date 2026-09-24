@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DhikrDefinition {
 
- String get id; String get title;@JsonKey(name: 'display_text') String get displayText; String? get description;@JsonKey(name: 'default_target') int get defaultTarget; DhikrDefinitionStatus get status;@JsonKey(name: 'created_by') String get createdBy;@JsonKey(name: 'source_reference') String? get sourceReference;@JsonKey(name: 'content_version') int get contentVersion;@JsonKey(name: 'content_checksum') String? get contentChecksum;@JsonKey(name: 'reviewed_by') String? get reviewedBy;@JsonKey(name: 'reviewed_at') DateTime? get reviewedAt;
+ String get id;@JsonKey(name: 'owner_branch_id') String? get ownerBranchId; String get title;@JsonKey(name: 'display_text') String get displayText; String? get description;@JsonKey(name: 'default_target') int get defaultTarget; DhikrDefinitionStatus get status;@JsonKey(name: 'created_by') String get createdBy;@JsonKey(name: 'source_reference') String? get sourceReference;@JsonKey(name: 'content_version') int get contentVersion;@JsonKey(name: 'content_checksum') String? get contentChecksum;@JsonKey(name: 'reviewed_by') String? get reviewedBy;@JsonKey(name: 'reviewed_at') DateTime? get reviewedAt;
 /// Create a copy of DhikrDefinition
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,16 @@ $DhikrDefinitionCopyWith<DhikrDefinition> get copyWith => _$DhikrDefinitionCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DhikrDefinition&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.displayText, displayText) || other.displayText == displayText)&&(identical(other.description, description) || other.description == description)&&(identical(other.defaultTarget, defaultTarget) || other.defaultTarget == defaultTarget)&&(identical(other.status, status) || other.status == status)&&(identical(other.createdBy, createdBy) || other.createdBy == createdBy)&&(identical(other.sourceReference, sourceReference) || other.sourceReference == sourceReference)&&(identical(other.contentVersion, contentVersion) || other.contentVersion == contentVersion)&&(identical(other.contentChecksum, contentChecksum) || other.contentChecksum == contentChecksum)&&(identical(other.reviewedBy, reviewedBy) || other.reviewedBy == reviewedBy)&&(identical(other.reviewedAt, reviewedAt) || other.reviewedAt == reviewedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DhikrDefinition&&(identical(other.id, id) || other.id == id)&&(identical(other.ownerBranchId, ownerBranchId) || other.ownerBranchId == ownerBranchId)&&(identical(other.title, title) || other.title == title)&&(identical(other.displayText, displayText) || other.displayText == displayText)&&(identical(other.description, description) || other.description == description)&&(identical(other.defaultTarget, defaultTarget) || other.defaultTarget == defaultTarget)&&(identical(other.status, status) || other.status == status)&&(identical(other.createdBy, createdBy) || other.createdBy == createdBy)&&(identical(other.sourceReference, sourceReference) || other.sourceReference == sourceReference)&&(identical(other.contentVersion, contentVersion) || other.contentVersion == contentVersion)&&(identical(other.contentChecksum, contentChecksum) || other.contentChecksum == contentChecksum)&&(identical(other.reviewedBy, reviewedBy) || other.reviewedBy == reviewedBy)&&(identical(other.reviewedAt, reviewedAt) || other.reviewedAt == reviewedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,displayText,description,defaultTarget,status,createdBy,sourceReference,contentVersion,contentChecksum,reviewedBy,reviewedAt);
+int get hashCode => Object.hash(runtimeType,id,ownerBranchId,title,displayText,description,defaultTarget,status,createdBy,sourceReference,contentVersion,contentChecksum,reviewedBy,reviewedAt);
 
 @override
 String toString() {
-  return 'DhikrDefinition(id: $id, title: $title, displayText: $displayText, description: $description, defaultTarget: $defaultTarget, status: $status, createdBy: $createdBy, sourceReference: $sourceReference, contentVersion: $contentVersion, contentChecksum: $contentChecksum, reviewedBy: $reviewedBy, reviewedAt: $reviewedAt)';
+  return 'DhikrDefinition(id: $id, ownerBranchId: $ownerBranchId, title: $title, displayText: $displayText, description: $description, defaultTarget: $defaultTarget, status: $status, createdBy: $createdBy, sourceReference: $sourceReference, contentVersion: $contentVersion, contentChecksum: $contentChecksum, reviewedBy: $reviewedBy, reviewedAt: $reviewedAt)';
 }
 
 
@@ -49,7 +49,7 @@ abstract mixin class $DhikrDefinitionCopyWith<$Res>  {
   factory $DhikrDefinitionCopyWith(DhikrDefinition value, $Res Function(DhikrDefinition) _then) = _$DhikrDefinitionCopyWithImpl;
 @useResult
 $Res call({
- String id, String title,@JsonKey(name: 'display_text') String displayText, String? description,@JsonKey(name: 'default_target') int defaultTarget, DhikrDefinitionStatus status,@JsonKey(name: 'created_by') String createdBy,@JsonKey(name: 'source_reference') String? sourceReference,@JsonKey(name: 'content_version') int contentVersion,@JsonKey(name: 'content_checksum') String? contentChecksum,@JsonKey(name: 'reviewed_by') String? reviewedBy,@JsonKey(name: 'reviewed_at') DateTime? reviewedAt
+ String id,@JsonKey(name: 'owner_branch_id') String? ownerBranchId, String title,@JsonKey(name: 'display_text') String displayText, String? description,@JsonKey(name: 'default_target') int defaultTarget, DhikrDefinitionStatus status,@JsonKey(name: 'created_by') String createdBy,@JsonKey(name: 'source_reference') String? sourceReference,@JsonKey(name: 'content_version') int contentVersion,@JsonKey(name: 'content_checksum') String? contentChecksum,@JsonKey(name: 'reviewed_by') String? reviewedBy,@JsonKey(name: 'reviewed_at') DateTime? reviewedAt
 });
 
 
@@ -66,10 +66,11 @@ class _$DhikrDefinitionCopyWithImpl<$Res>
 
 /// Create a copy of DhikrDefinition
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? displayText = null,Object? description = freezed,Object? defaultTarget = null,Object? status = null,Object? createdBy = null,Object? sourceReference = freezed,Object? contentVersion = null,Object? contentChecksum = freezed,Object? reviewedBy = freezed,Object? reviewedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? ownerBranchId = freezed,Object? title = null,Object? displayText = null,Object? description = freezed,Object? defaultTarget = null,Object? status = null,Object? createdBy = null,Object? sourceReference = freezed,Object? contentVersion = null,Object? contentChecksum = freezed,Object? reviewedBy = freezed,Object? reviewedAt = freezed,}) {
   return _then(DhikrDefinition(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,ownerBranchId: freezed == ownerBranchId ? _self.ownerBranchId : ownerBranchId // ignore: cast_nullable_to_non_nullable
+as String?,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,displayText: null == displayText ? _self.displayText : displayText // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,defaultTarget: null == defaultTarget ? _self.defaultTarget : defaultTarget // ignore: cast_nullable_to_non_nullable
@@ -165,10 +166,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title, @JsonKey(name: 'display_text')  String displayText,  String? description, @JsonKey(name: 'default_target')  int defaultTarget,  DhikrDefinitionStatus status, @JsonKey(name: 'created_by')  String createdBy, @JsonKey(name: 'source_reference')  String? sourceReference, @JsonKey(name: 'content_version')  int contentVersion, @JsonKey(name: 'content_checksum')  String? contentChecksum, @JsonKey(name: 'reviewed_by')  String? reviewedBy, @JsonKey(name: 'reviewed_at')  DateTime? reviewedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'owner_branch_id')  String? ownerBranchId,  String title, @JsonKey(name: 'display_text')  String displayText,  String? description, @JsonKey(name: 'default_target')  int defaultTarget,  DhikrDefinitionStatus status, @JsonKey(name: 'created_by')  String createdBy, @JsonKey(name: 'source_reference')  String? sourceReference, @JsonKey(name: 'content_version')  int contentVersion, @JsonKey(name: 'content_checksum')  String? contentChecksum, @JsonKey(name: 'reviewed_by')  String? reviewedBy, @JsonKey(name: 'reviewed_at')  DateTime? reviewedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DhikrDefinition() when $default != null:
-return $default(_that.id,_that.title,_that.displayText,_that.description,_that.defaultTarget,_that.status,_that.createdBy,_that.sourceReference,_that.contentVersion,_that.contentChecksum,_that.reviewedBy,_that.reviewedAt);case _:
+return $default(_that.id,_that.ownerBranchId,_that.title,_that.displayText,_that.description,_that.defaultTarget,_that.status,_that.createdBy,_that.sourceReference,_that.contentVersion,_that.contentChecksum,_that.reviewedBy,_that.reviewedAt);case _:
   return orElse();
 
 }
@@ -186,10 +187,10 @@ return $default(_that.id,_that.title,_that.displayText,_that.description,_that.d
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title, @JsonKey(name: 'display_text')  String displayText,  String? description, @JsonKey(name: 'default_target')  int defaultTarget,  DhikrDefinitionStatus status, @JsonKey(name: 'created_by')  String createdBy, @JsonKey(name: 'source_reference')  String? sourceReference, @JsonKey(name: 'content_version')  int contentVersion, @JsonKey(name: 'content_checksum')  String? contentChecksum, @JsonKey(name: 'reviewed_by')  String? reviewedBy, @JsonKey(name: 'reviewed_at')  DateTime? reviewedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'owner_branch_id')  String? ownerBranchId,  String title, @JsonKey(name: 'display_text')  String displayText,  String? description, @JsonKey(name: 'default_target')  int defaultTarget,  DhikrDefinitionStatus status, @JsonKey(name: 'created_by')  String createdBy, @JsonKey(name: 'source_reference')  String? sourceReference, @JsonKey(name: 'content_version')  int contentVersion, @JsonKey(name: 'content_checksum')  String? contentChecksum, @JsonKey(name: 'reviewed_by')  String? reviewedBy, @JsonKey(name: 'reviewed_at')  DateTime? reviewedAt)  $default,) {final _that = this;
 switch (_that) {
 case _DhikrDefinition():
-return $default(_that.id,_that.title,_that.displayText,_that.description,_that.defaultTarget,_that.status,_that.createdBy,_that.sourceReference,_that.contentVersion,_that.contentChecksum,_that.reviewedBy,_that.reviewedAt);case _:
+return $default(_that.id,_that.ownerBranchId,_that.title,_that.displayText,_that.description,_that.defaultTarget,_that.status,_that.createdBy,_that.sourceReference,_that.contentVersion,_that.contentChecksum,_that.reviewedBy,_that.reviewedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -206,10 +207,10 @@ return $default(_that.id,_that.title,_that.displayText,_that.description,_that.d
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title, @JsonKey(name: 'display_text')  String displayText,  String? description, @JsonKey(name: 'default_target')  int defaultTarget,  DhikrDefinitionStatus status, @JsonKey(name: 'created_by')  String createdBy, @JsonKey(name: 'source_reference')  String? sourceReference, @JsonKey(name: 'content_version')  int contentVersion, @JsonKey(name: 'content_checksum')  String? contentChecksum, @JsonKey(name: 'reviewed_by')  String? reviewedBy, @JsonKey(name: 'reviewed_at')  DateTime? reviewedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id, @JsonKey(name: 'owner_branch_id')  String? ownerBranchId,  String title, @JsonKey(name: 'display_text')  String displayText,  String? description, @JsonKey(name: 'default_target')  int defaultTarget,  DhikrDefinitionStatus status, @JsonKey(name: 'created_by')  String createdBy, @JsonKey(name: 'source_reference')  String? sourceReference, @JsonKey(name: 'content_version')  int contentVersion, @JsonKey(name: 'content_checksum')  String? contentChecksum, @JsonKey(name: 'reviewed_by')  String? reviewedBy, @JsonKey(name: 'reviewed_at')  DateTime? reviewedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _DhikrDefinition() when $default != null:
-return $default(_that.id,_that.title,_that.displayText,_that.description,_that.defaultTarget,_that.status,_that.createdBy,_that.sourceReference,_that.contentVersion,_that.contentChecksum,_that.reviewedBy,_that.reviewedAt);case _:
+return $default(_that.id,_that.ownerBranchId,_that.title,_that.displayText,_that.description,_that.defaultTarget,_that.status,_that.createdBy,_that.sourceReference,_that.contentVersion,_that.contentChecksum,_that.reviewedBy,_that.reviewedAt);case _:
   return null;
 
 }
@@ -221,10 +222,11 @@ return $default(_that.id,_that.title,_that.displayText,_that.description,_that.d
 @JsonSerializable()
 
 class _DhikrDefinition implements DhikrDefinition {
-  const _DhikrDefinition({required this.id, required this.title, @JsonKey(name: 'display_text') required this.displayText, this.description, @JsonKey(name: 'default_target') required this.defaultTarget, required this.status, @JsonKey(name: 'created_by') required this.createdBy, @JsonKey(name: 'source_reference') this.sourceReference, @JsonKey(name: 'content_version') this.contentVersion = 1, @JsonKey(name: 'content_checksum') this.contentChecksum, @JsonKey(name: 'reviewed_by') this.reviewedBy, @JsonKey(name: 'reviewed_at') this.reviewedAt});
+  const _DhikrDefinition({required this.id, @JsonKey(name: 'owner_branch_id') this.ownerBranchId, required this.title, @JsonKey(name: 'display_text') required this.displayText, this.description, @JsonKey(name: 'default_target') required this.defaultTarget, required this.status, @JsonKey(name: 'created_by') required this.createdBy, @JsonKey(name: 'source_reference') this.sourceReference, @JsonKey(name: 'content_version') this.contentVersion = 1, @JsonKey(name: 'content_checksum') this.contentChecksum, @JsonKey(name: 'reviewed_by') this.reviewedBy, @JsonKey(name: 'reviewed_at') this.reviewedAt});
   factory _DhikrDefinition.fromJson(Map<String, dynamic> json) => _$DhikrDefinitionFromJson(json);
 
 @override final  String id;
+@override@JsonKey(name: 'owner_branch_id') final  String? ownerBranchId;
 @override final  String title;
 @override@JsonKey(name: 'display_text') final  String displayText;
 @override final  String? description;
@@ -250,16 +252,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DhikrDefinition&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.displayText, displayText) || other.displayText == displayText)&&(identical(other.description, description) || other.description == description)&&(identical(other.defaultTarget, defaultTarget) || other.defaultTarget == defaultTarget)&&(identical(other.status, status) || other.status == status)&&(identical(other.createdBy, createdBy) || other.createdBy == createdBy)&&(identical(other.sourceReference, sourceReference) || other.sourceReference == sourceReference)&&(identical(other.contentVersion, contentVersion) || other.contentVersion == contentVersion)&&(identical(other.contentChecksum, contentChecksum) || other.contentChecksum == contentChecksum)&&(identical(other.reviewedBy, reviewedBy) || other.reviewedBy == reviewedBy)&&(identical(other.reviewedAt, reviewedAt) || other.reviewedAt == reviewedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DhikrDefinition&&(identical(other.id, id) || other.id == id)&&(identical(other.ownerBranchId, ownerBranchId) || other.ownerBranchId == ownerBranchId)&&(identical(other.title, title) || other.title == title)&&(identical(other.displayText, displayText) || other.displayText == displayText)&&(identical(other.description, description) || other.description == description)&&(identical(other.defaultTarget, defaultTarget) || other.defaultTarget == defaultTarget)&&(identical(other.status, status) || other.status == status)&&(identical(other.createdBy, createdBy) || other.createdBy == createdBy)&&(identical(other.sourceReference, sourceReference) || other.sourceReference == sourceReference)&&(identical(other.contentVersion, contentVersion) || other.contentVersion == contentVersion)&&(identical(other.contentChecksum, contentChecksum) || other.contentChecksum == contentChecksum)&&(identical(other.reviewedBy, reviewedBy) || other.reviewedBy == reviewedBy)&&(identical(other.reviewedAt, reviewedAt) || other.reviewedAt == reviewedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,displayText,description,defaultTarget,status,createdBy,sourceReference,contentVersion,contentChecksum,reviewedBy,reviewedAt);
+int get hashCode => Object.hash(runtimeType,id,ownerBranchId,title,displayText,description,defaultTarget,status,createdBy,sourceReference,contentVersion,contentChecksum,reviewedBy,reviewedAt);
 
 @override
 String toString() {
-  return 'DhikrDefinition(id: $id, title: $title, displayText: $displayText, description: $description, defaultTarget: $defaultTarget, status: $status, createdBy: $createdBy, sourceReference: $sourceReference, contentVersion: $contentVersion, contentChecksum: $contentChecksum, reviewedBy: $reviewedBy, reviewedAt: $reviewedAt)';
+  return 'DhikrDefinition(id: $id, ownerBranchId: $ownerBranchId, title: $title, displayText: $displayText, description: $description, defaultTarget: $defaultTarget, status: $status, createdBy: $createdBy, sourceReference: $sourceReference, contentVersion: $contentVersion, contentChecksum: $contentChecksum, reviewedBy: $reviewedBy, reviewedAt: $reviewedAt)';
 }
 
 
@@ -270,7 +272,7 @@ abstract mixin class _$DhikrDefinitionCopyWith<$Res> implements $DhikrDefinition
   factory _$DhikrDefinitionCopyWith(_DhikrDefinition value, $Res Function(_DhikrDefinition) _then) = __$DhikrDefinitionCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title,@JsonKey(name: 'display_text') String displayText, String? description,@JsonKey(name: 'default_target') int defaultTarget, DhikrDefinitionStatus status,@JsonKey(name: 'created_by') String createdBy,@JsonKey(name: 'source_reference') String? sourceReference,@JsonKey(name: 'content_version') int contentVersion,@JsonKey(name: 'content_checksum') String? contentChecksum,@JsonKey(name: 'reviewed_by') String? reviewedBy,@JsonKey(name: 'reviewed_at') DateTime? reviewedAt
+ String id,@JsonKey(name: 'owner_branch_id') String? ownerBranchId, String title,@JsonKey(name: 'display_text') String displayText, String? description,@JsonKey(name: 'default_target') int defaultTarget, DhikrDefinitionStatus status,@JsonKey(name: 'created_by') String createdBy,@JsonKey(name: 'source_reference') String? sourceReference,@JsonKey(name: 'content_version') int contentVersion,@JsonKey(name: 'content_checksum') String? contentChecksum,@JsonKey(name: 'reviewed_by') String? reviewedBy,@JsonKey(name: 'reviewed_at') DateTime? reviewedAt
 });
 
 
@@ -287,10 +289,11 @@ class __$DhikrDefinitionCopyWithImpl<$Res>
 
 /// Create a copy of DhikrDefinition
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? displayText = null,Object? description = freezed,Object? defaultTarget = null,Object? status = null,Object? createdBy = null,Object? sourceReference = freezed,Object? contentVersion = null,Object? contentChecksum = freezed,Object? reviewedBy = freezed,Object? reviewedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? ownerBranchId = freezed,Object? title = null,Object? displayText = null,Object? description = freezed,Object? defaultTarget = null,Object? status = null,Object? createdBy = null,Object? sourceReference = freezed,Object? contentVersion = null,Object? contentChecksum = freezed,Object? reviewedBy = freezed,Object? reviewedAt = freezed,}) {
   return _then(_DhikrDefinition(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,ownerBranchId: freezed == ownerBranchId ? _self.ownerBranchId : ownerBranchId // ignore: cast_nullable_to_non_nullable
+as String?,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,displayText: null == displayText ? _self.displayText : displayText // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,defaultTarget: null == defaultTarget ? _self.defaultTarget : defaultTarget // ignore: cast_nullable_to_non_nullable

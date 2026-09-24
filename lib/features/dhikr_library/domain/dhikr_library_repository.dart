@@ -4,6 +4,7 @@ abstract interface class DhikrLibraryRepository {
   Future<List<DhikrDefinition>> listDefinitions();
 
   Future<DhikrDefinition> createDefinition({
+    required String organizationId,
     required String title,
     required String displayText,
     required int defaultTarget,
@@ -11,7 +12,10 @@ abstract interface class DhikrLibraryRepository {
     String? sourceReference,
   });
 
-  Future<DhikrDefinition> updateDefinition(DhikrDefinition definition);
+  Future<DhikrDefinition> updateDefinition({
+    required String organizationId,
+    required DhikrDefinition definition,
+  });
 }
 
 class DhikrLibraryFailure implements Exception {

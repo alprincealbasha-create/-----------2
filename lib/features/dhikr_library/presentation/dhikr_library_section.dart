@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ward_al_rawdah/features/dhikr_library/application/dhikr_library_controller.dart';
+import 'package:ward_al_rawdah/features/auth/application/auth_controller.dart';
+import 'package:ward_al_rawdah/features/auth/domain/app_role.dart';
+import 'package:ward_al_rawdah/features/auth/domain/auth_state.dart';
 import 'package:ward_al_rawdah/features/dhikr_library/domain/dhikr_definition.dart';
 import 'package:ward_al_rawdah/features/dhikr_library/domain/dhikr_library_repository.dart';
 
@@ -11,6 +14,11 @@ class DhikrLibrarySection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final definitions = ref.watch(dhikrLibraryProvider);
     final controller = ref.read(dhikrLibraryProvider.notifier);
+    final actor = switch (ref.watch(authControllerProvider)) {
+      AuthAuthenticated(:final user) => user,
+      _ => null,
+    };
+    final canApprove = actor?.role == AppRole.organizationAdmin;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -85,24 +93,32 @@ class DhikrLibrarySection extends ConsumerWidget {
                             ),
                             trailing: IconButton(
                               tooltip: 'تعديل تعريف الذكر',
-                              onPressed: () async {
-                                final input = await showDhikrDefinitionDialog(
-                                  context,
-                                  definition: item,
-                                );
-                                if (input != null) {
-                                  await controller.updateDefinition(
-                                    item.copyWith(
-                                      title: input.title,
-                                      displayText: input.displayText,
-                                      description: input.description,
-                                      defaultTarget: input.defaultTarget,
-                                      sourceReference: input.sourceReference,
-                                      status: input.status,
-                                    ),
-                                  );
-                                }
-                              },
+                              onPressed:
+                                  actor == null ||
+                                      (!canApprove &&
+                                          item.ownerBranchId != actor.branchId)
+                                  ? null
+                                  : () async {
+                                      final input =
+                                          await showDhikrDefinitionDialog(
+                                            context,
+                                            definition: item,
+                                            canApprove: canApprove,
+                                          );
+                                      if (input != null) {
+                                        await controller.updateDefinition(
+                                          item.copyWith(
+                                            title: input.title,
+                                            displayText: input.displayText,
+                                            description: input.description,
+                                            defaultTarget: input.defaultTarget,
+                                            sourceReference:
+                                                input.sourceReference,
+                                            status: input.status,
+                                          ),
+                                        );
+                                      }
+                                    },
                               icon: const Icon(Icons.edit_outlined),
                             ),
                           ),
@@ -137,6 +153,7 @@ class DhikrDefinitionInput {
 Future<DhikrDefinitionInput?> showDhikrDefinitionDialog(
   BuildContext context, {
   DhikrDefinition? definition,
+  bool canApprove = false,
 }) async {
   final formKey = GlobalKey<FormState>();
   final title = TextEditingController(text: definition?.title);
@@ -196,7 +213,10 @@ Future<DhikrDefinitionInput?> showDhikrDefinitionDialog(
                     initialValue: status,
                     decoration: const InputDecoration(labelText: 'الحالة'),
                     items: [
-                      for (final item in DhikrDefinitionStatus.values)
+                      for (final item in _allowedStatuses(
+                        definition.status,
+                        canApprove,
+                      ))
                         DropdownMenuItem(
                           value: item,
                           child: Text(item.arabicLabel),
@@ -259,4 +279,36 @@ String? _targetValidator(String? value) {
 String? _optional(String value) {
   final normalized = value.trim();
   return normalized.isEmpty ? null : normalized;
+}
+
+List<DhikrDefinitionStatus> _allowedStatuses(
+  DhikrDefinitionStatus current,
+  bool canApprove,
+) {
+  if (!canApprove) {
+    return current == DhikrDefinitionStatus.inReview
+        ? const [DhikrDefinitionStatus.inReview, DhikrDefinitionStatus.draft]
+        : const [DhikrDefinitionStatus.draft, DhikrDefinitionStatus.inReview];
+  }
+  return switch (current) {
+    DhikrDefinitionStatus.draft => const [
+      DhikrDefinitionStatus.draft,
+      DhikrDefinitionStatus.inReview,
+      DhikrDefinitionStatus.archived,
+    ],
+    DhikrDefinitionStatus.inReview => const [
+      DhikrDefinitionStatus.inReview,
+      DhikrDefinitionStatus.draft,
+      DhikrDefinitionStatus.approved,
+      DhikrDefinitionStatus.archived,
+    ],
+    DhikrDefinitionStatus.approved => const [
+      DhikrDefinitionStatus.approved,
+      DhikrDefinitionStatus.archived,
+    ],
+    DhikrDefinitionStatus.archived => const [
+      DhikrDefinitionStatus.archived,
+      DhikrDefinitionStatus.draft,
+    ],
+  };
 }

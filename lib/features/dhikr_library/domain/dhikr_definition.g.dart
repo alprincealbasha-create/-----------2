@@ -9,6 +9,7 @@ part of 'dhikr_definition.dart';
 _DhikrDefinition _$DhikrDefinitionFromJson(Map<String, dynamic> json) =>
     _DhikrDefinition(
       id: json['id'] as String,
+      ownerBranchId: json['owner_branch_id'] as String?,
       title: json['title'] as String,
       displayText: json['display_text'] as String,
       description: json['description'] as String?,
@@ -27,6 +28,7 @@ _DhikrDefinition _$DhikrDefinitionFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$DhikrDefinitionToJson(_DhikrDefinition instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'owner_branch_id': instance.ownerBranchId,
       'title': instance.title,
       'display_text': instance.displayText,
       'description': instance.description,
@@ -42,7 +44,7 @@ Map<String, dynamic> _$DhikrDefinitionToJson(_DhikrDefinition instance) =>
 
 const _$DhikrDefinitionStatusEnumMap = {
   DhikrDefinitionStatus.draft: 'draft',
-  DhikrDefinitionStatus.underReview: 'under_review',
+  DhikrDefinitionStatus.inReview: 'in_review',
   DhikrDefinitionStatus.approved: 'approved',
   DhikrDefinitionStatus.archived: 'archived',
 };

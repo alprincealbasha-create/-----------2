@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ward_al_rawdah/features/dhikr_library/application/dhikr_library_controller.dart';
+import 'package:ward_al_rawdah/features/auth/application/auth_controller.dart';
+import 'package:ward_al_rawdah/features/auth/domain/app_role.dart';
+import 'package:ward_al_rawdah/features/auth/domain/auth_state.dart';
+import 'package:ward_al_rawdah/features/auth/domain/auth_user.dart';
 import 'package:ward_al_rawdah/features/dhikr_library/domain/dhikr_definition.dart';
 import 'package:ward_al_rawdah/features/dhikr_library/presentation/dhikr_library_section.dart';
 
@@ -33,6 +37,7 @@ void main() {
       ProviderScope(
         overrides: [
           dhikrLibraryProvider.overrideWith(FixedLibraryController.new),
+          authControllerProvider.overrideWith(FixedAdminController.new),
         ],
         child: const MaterialApp(
           home: Scaffold(
@@ -71,4 +76,15 @@ class FixedLibraryController extends DhikrLibraryController {
       reviewedBy: 'reviewer-1',
     ),
   ];
+}
+
+class FixedAdminController extends AuthController {
+  @override
+  AuthState build() => const AuthState.authenticated(
+    AuthUser(
+      id: 'admin-1',
+      organizationId: 'org-1',
+      role: AppRole.organizationAdmin,
+    ),
+  );
 }
